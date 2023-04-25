@@ -8,16 +8,16 @@ on:
         default: 'stage'
         required: true
         type: string
-      REPO_NAME:
-        description: 'Test Repo'
-        default: 'ms-mono-repo-template'
-        required: true
-        type: string
-      NODE_ENV:
-        description: 'Test Env'
-        default: 'local'
-        required: true
-        type: string
+      # REPO_NAME:
+      #   description: 'Test Repo'
+      #   default: 'ms-mono-repo-template'
+      #   required: true
+      #   type: string
+      # NODE_ENV:
+      #   description: 'Test Env'
+      #   default: 'local'
+      #   required: true
+      #   type: string
 jobs:
   set-up:
     name: set-up
