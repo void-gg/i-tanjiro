@@ -1,8 +1,9 @@
 name: Nest Mono Repo Build
 
 on:
-  workflow_call:
-  
+  workflow_run:
+    workflows: ["Parent Workflow"]
+
 jobs:
   status:
     runs-on: ubuntu-latest
