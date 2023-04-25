@@ -2,7 +2,7 @@ name: Nest Mono Repo Build
 
 on:
   workflow_call:
-    workflows: ['Pipeline']
+  
 jobs:
   status:
     runs-on: ubuntu-latest
