@@ -11,6 +11,13 @@ jobs:
         run: |
           echo ${{ github.workflow }}
           echo "-----"
+  hi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: My Step
+        run: |
+          echo ${{ github.workflow }}
+          echo "-----"
   # set-up:
   #   name: set-up
   #   needs: [checkout]
@@ -101,7 +108,7 @@ jobs:
   #         echo DEPLOY_APPS=$DEPLOY_APPS >> $GITHUB_OUTPUT
   # build:
   #   name: deploy
-  #   needs: [nest-set-up]
+  #   needs: [set-up]
   #   runs-on: ubuntu-latest
   #   if: |
   #     (
