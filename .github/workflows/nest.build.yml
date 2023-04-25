@@ -1,0 +1,102 @@
+name: Nest Build
+
+on:
+  pull_request:
+    branches: [prod, stage, qa, dev]
+    types: [closed]
+  push:
+    branches: [dev]
+
+env:
+  REPO_NAME: ${{ github.event.repository.name }}
+  NODE_ENV: ${{github.event.pull_request.base.ref || github.ref_name}}
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+jobs:
+  set-up:
+    name: set-up
+    runs-on: ubuntu-latest
+    outputs:
+      envs: ${{ toJSON(steps.export-vars.outputs) }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - name: Get Changed Files
+        run: |
+          echo "github.event_name --> ${{ github.event_name }}"
+          echo "github.ref --> ${{ github.ref }}"
+          echo "github.event.pull_request.base.ref --> ${{ github.event.pull_request.base.ref }}"
+          echo "github.event.pull_request.merged  --> ${{ github.event.pull_request.merged  }}"
+          
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}...${{ github.event.pull_request.head.sha }} -- .)
+          else
+            if [ "${{ github.ref }}" = "refs/heads/prod" ]; then
+              CHANGED_FILES=$(git diff --name-only HEAD~1 -- .)
+            fi
+            if [ "${{ github.ref }}" = "refs/heads/stage" ]; then
+              CHANGED_FILES=$(git diff --name-only HEAD~1 -- .)
+            fi
+            if [ "${{ github.ref }}" = "refs/heads/qa" ]; then
+              CHANGED_FILES=$(git diff --name-only HEAD~1 -- .)
+            fi
+            if [ "${{ github.ref }}" = "refs/heads/dev" ]; then
+              CHANGED_FILES=$(git diff --name-only HEAD~1 -- .)
+            fi
+          fi
+
+          CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ')
+          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+          echo "Changed Files --> $CHANGED_FILES"
+      - name: Define Apps To Deploy
+        run: |
+          CHANGE_ALL=false
+          APPS=()
+          echo "Iterating changed files" 
+          echo "Changed Files --> $CHANGED_FILES"
+          for file in $CHANGED_FILES; do
+          echo "------------------   START      --------------------"
+            echo "Checking file: $file"
+            result=$(echo "$file" | grep '^apps/' || true)
+            echo "result --> $result"
+            if [ -z "$result" ]; then
+              echo "General File: $file"
+              CHANGE_ALL=true
+              echo "CHANGE_ALL --> $CHANGE_ALL"
+              echo "---------------------------------------------------"
+              break
+            else
+              echo "Specific App File: $file"
+              parsed_file=$(echo "$file" | sed -r -e 's/apps\///' -e 's/\/.*//');
+              if [[ ! " ${APPS[*]} " =~ " ${parsed_file} " ]]; then
+                APPS+=($parsed_file)
+                echo "File Added --> $parsed_file"
+              fi
+              echo "---------------------------------------------------"
+            fi
+          done
+          echo "Define DEPLOY APPS" 
+          echo "Change all --> $CHANGE_ALL"
+          if [[ $CHANGE_ALL = true ]]; then
+            DEPLOY_APPS=($(find ./ -maxdepth 2 -type d -wholename './apps/*' | sed 's/\.\/apps\///'))
+          else
+            DEPLOY_APPS=("${APPS[@]}")
+          fi
+          echo "Deploy Apps --> ${DEPLOY_APPS[*]}"
+          echo "Changed Files --> $CHANGED_FILES"
+
+          echo "DEPLOY_APPS=${DEPLOY_APPS[*]}" >> $GITHUB_ENV
+          echo "CHANGE_ALL=$CHANGE_ALL" >> $GITHUB_ENV
+          
+      - name: Summary
+        id: export-vars
+        run: |
+          echo "Changed Files --> $CHANGED_FILES"
+          echo "Change All --> ${CHANGE_ALL[*]}"
+          echo "Deploy Apps --> ${DEPLOY_APPS[*]}"
+
+          echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
+          echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
+          echo DEPLOY_APPS=$DEPLOY_APPS >> $GITHUB_OUTPUT
