@@ -13,6 +13,10 @@ on:
         default: 'stage'
         required: true
         type: string
+      env_vars:
+        description: 'Environment Variables'
+        required: true
+        default: '{}'
       # REPO_NAME:
       #   description: 'Test Repo'
       #   default: 'ms-mono-repo-template'
@@ -23,6 +27,8 @@ on:
       #   default: 'local'
       #   required: true
       #   type: string
+env:
+  ${{ fromJSON(inputs.env_vars) }}
 jobs:
   print_things:
     name: print
