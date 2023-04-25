@@ -13,7 +13,7 @@ jobs:
           echo "-----"
   hi:
     runs-on: ubuntu-latest
-    needs: { workflow: 'Pipeline', job: 'checkout' }
+    needs: [checkout]
     steps:
       - name: My Step
         run: |
