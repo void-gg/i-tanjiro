@@ -1,5 +1,12 @@
 name: Nest Mono Repo Build
 
+on:
+  pull_request:
+    branches: [prod, stage, qa, dev]
+    types: [closed]
+  push:
+    branches: [prod,dev]
+
 jobs:
   set-up:
     name: set-up
