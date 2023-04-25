@@ -24,6 +24,16 @@ on:
       #   required: true
       #   type: string
 jobs:
+  print_things:
+    name: print
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print
+        run: |
+          echo "Environment variables:"
+          env
+          echo "Input parameters:"
+          echo ${{ inputs }}"
   set-up:
     name: set-up
     runs-on: ubuntu-latest
