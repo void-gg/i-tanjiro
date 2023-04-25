@@ -11,9 +11,6 @@ jobs:
         run: |
           echo ${{ github.workflow }}
           echo "-----"
-          echo ${{ GITHUB_WORKFLOW }}
-          echo '-----'
-          echo ${{ env.GITHUB_WORKFLOW }}"
   set-up:
     name: set-up
     needs: [checkout]
