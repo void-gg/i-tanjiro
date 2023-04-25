@@ -13,7 +13,7 @@ jobs:
           echo "-----"
   hi:
     runs-on: ubuntu-latest
-    needs: [checkout]
+    needs: [Pipeline.checkout]
     steps:
       - name: My Step
         run: |
