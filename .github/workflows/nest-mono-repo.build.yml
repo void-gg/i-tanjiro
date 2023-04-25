@@ -1,20 +1,9 @@
-name: Nest Build
-
-on:
-  pull_request:
-    branches: [prod, stage, qa, dev]
-    types: [closed]
-  push:
-    branches: [dev]
-
-env:
-  REPO_NAME: ${{ github.event.repository.name }}
-  NODE_ENV: ${{github.event.pull_request.base.ref || github.ref_name}}
-  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+name: Nest Mono Repo Build
 
 jobs:
   set-up:
     name: set-up
+    needs: [checkout]
     runs-on: ubuntu-latest
     outputs:
       envs: ${{ toJSON(steps.export-vars.outputs) }}
@@ -100,3 +89,47 @@ jobs:
           echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
           echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
           echo DEPLOY_APPS=$DEPLOY_APPS >> $GITHUB_OUTPUT
+  build:
+    name: deploy
+    needs: [nest-set-up]
+    runs-on: ubuntu-latest
+    if: |
+      (
+        github.event_name == 'push' &&
+        (
+          github.ref == 'refs/heads/prod' ||
+          github.ref == 'refs/heads/stage' ||
+          github.ref == 'refs/heads/qa' ||
+          github.ref == 'refs/heads/dev'
+        )
+      ) ||
+      (
+        github.event_name == 'pull_request' &&
+        (
+          github.event.pull_request.head.ref == 'prod' ||
+          github.event.pull_request.head.ref == 'stage' ||
+          github.event.pull_request.head.ref == 'qa' ||
+          github.event.pull_request.head.ref == 'dev'
+        ) &&
+        github.event.pull_request.merged == true
+      )
+    steps:
+      - name: Get environment variables
+        id: update-env-vars
+        run: |
+          echo '${{ needs.set-up.outputs.envs }}' | jq -r '. | to_entries | .[] | .key + "=" + .value' | while read -r line; do
+              echo "$line" >> $GITHUB_ENV
+          done
+          echo '${{ needs.job1.outputs.envs }}' | jq -r '. | to_entries | .[] | .key + "=" + .value' | while read -r line; do
+              echo "$line" >> $GITHUB_ENV
+          done
+      - name: Show Apps
+        run: |
+          IFS=' ' read -ra DEPLOY_APPS_ARRAY <<< "$DEPLOY_APPS"
+          echo "Deploy apps:"
+          for app in "${DEPLOY_APPS_ARRAY[@]}"; do
+            echo "$REPO_NAME"
+            echo "$app"
+            echo "$REPO_NAME-$app"
+            echo "flyctl deploy ./ --config apps/$app/fly.${NODE_ENV}.toml"
+          done
