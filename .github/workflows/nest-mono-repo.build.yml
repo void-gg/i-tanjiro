@@ -3,7 +3,12 @@ name: Nest Mono Repo Build
 on:
   workflow_call:
     inputs:
-      env:
+      hey:
+        description: 'Test'
+        default: 'stage'
+        required: true
+        type: string
+      you:
         description: 'Test'
         default: 'stage'
         required: true
