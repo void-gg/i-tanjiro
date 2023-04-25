@@ -16,6 +16,7 @@ jobs:
     steps:
       - name: Print parent workflow context
         run: |
+          echo "Parent Workflow Name: ${{ github.event.workflow }}"
           echo "Parent workflow ID: ${{ github.event.workflow_run.id }}"
           echo "Parent workflow name: ${{ github.event.workflow.name }}"
           echo "Parent workflow repository: ${{ github.event.repository.full_name }}"
