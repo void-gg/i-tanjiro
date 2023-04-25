@@ -8,7 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: My Step
-        run: "echo ${{ github.workflow }} && echo '-----' && echo ${{ GITHUB_WORKFLOW }} && echo '-----' echo ${{ env.GITHUB_WORKFLOW }}"
+        run: |
+          echo ${{ github.workflow }}
+          echo "-----"
+          echo ${{ GITHUB_WORKFLOW }}
+          echo '-----'
+          echo ${{ env.GITHUB_WORKFLOW }}"
   set-up:
     name: set-up
     needs: [checkout]
