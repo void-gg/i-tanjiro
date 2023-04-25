@@ -33,7 +33,7 @@ jobs:
           echo "Environment variables:"
           env
           echo "Input parameters:"
-          echo ${{ inputs }}"
+          echo ${{ toJson(inputs) }}"
   set-up:
     name: set-up
     runs-on: ubuntu-latest
