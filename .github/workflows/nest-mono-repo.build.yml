@@ -17,6 +17,7 @@ on:
         description: 'Environment Variables'
         required: true
         default: '{}'
+        type: string
       # REPO_NAME:
       #   description: 'Test Repo'
       #   default: 'ms-mono-repo-template'
