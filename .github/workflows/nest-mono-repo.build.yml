@@ -28,6 +28,10 @@ on:
       #   default: 'local'
       #   required: true
       #   type: string
+
+env:
+  ${{ fromJSON(inputs.env_vars) }}
+
 jobs:
   print_things:
     name: print
