@@ -10,8 +10,8 @@ on:
         type: string
     outputs:
       env-json-output:
-        description: "The first output string"
-        value: Hola
+        description: "Environment Ouputs"
+        value: ${{ toJSON(build.export-outputs.outputs) }}
 
 env:
   ${{ fromJSON(inputs.env_vars) }}
