@@ -9,29 +9,14 @@ on:
         default: '{}'
         type: string
     outputs:
-      firstword:
+      env-json-output:
         description: "The first output string"
-        value: ${{ jobs.example_job.outputs.output1 }}
-      secondword:
-        description: "The second output string"
-        value: ${{ jobs.example_job.outputs.output2 }}
+        value: ${{ jobs.build.outputs.all-outputs }}
 
 env:
   ${{ fromJSON(inputs.env_vars) }}
 
 jobs:
-  example_job:
-    name: Generate output
-    runs-on: ubuntu-latest
-    # Map the job outputs to step outputs
-    outputs:
-      output1: ${{ steps.step1.outputs.firstword }}
-      output2: ${{ steps.step2.outputs.secondword }}
-    steps:
-      - id: step1
-        run: echo "firstword=hello" >> $GITHUB_OUTPUT
-      - id: step2
-        run: echo "secondword=world" >> $GITHUB_OUTPUT
   set-up:
     name: set-up
     runs-on: ubuntu-latest
@@ -123,6 +108,8 @@ jobs:
     name: build
     needs: [set-up]
     runs-on: ubuntu-latest
+    outputs:
+      all-outputs: ${{ steps.export-outputs.outputs.CHANGE_ALL }}
     if: |
       (
         github.event_name == 'push' &&
