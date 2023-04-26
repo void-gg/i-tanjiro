@@ -11,7 +11,7 @@ on:
     outputs:
       env-json-output:
         description: "Environment Ouputs"
-        value: ${{ build.steps.export-outputs.outputs }}
+        value: ${{ steps.export-outputs.outputs }}
 
 env:
   ${{ fromJSON(inputs.env_vars) }}
