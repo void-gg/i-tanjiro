@@ -9,12 +9,9 @@ on:
         default: '{}'
         type: string
     outputs:
-      firstword:
+      env-json-output:
         description: "The first output string"
         value: Hola
-      secondword:
-        description: "The second output string"
-        value: Chao
 
 env:
   ${{ fromJSON(inputs.env_vars) }}
@@ -160,3 +157,4 @@ jobs:
           echo DEPLOY_APPS=$DEPLOY_APPS >> $GITHUB_OUTPUT
           echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
           echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
+          echo env
