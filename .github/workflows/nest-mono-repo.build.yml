@@ -3,45 +3,16 @@ name: Nest Mono Repo Build
 on:
   workflow_call:
     inputs:
-      hey:
-        description: 'Test'
-        default: 'stage'
-        required: true
-        type: string
-      you:
-        description: 'Test'
-        default: 'stage'
-        required: true
-        type: string
       env_vars:
         description: 'Environment Variables'
         required: true
         default: '{}'
         type: string
-      # REPO_NAME:
-      #   description: 'Test Repo'
-      #   default: 'ms-mono-repo-template'
-      #   required: true
-      #   type: string
-      # NODE_ENV:
-      #   description: 'Test Env'
-      #   default: 'local'
-      #   required: true
-      #   type: string
 
 env:
   ${{ fromJSON(inputs.env_vars) }}
 
 jobs:
-  print_things:
-    name: print
-    runs-on: ubuntu-latest
-    steps:
-      - name: Print
-        run: |
-          echo "Environment variables:"
-          env
-          echo "Input parameters: ${{ inputs.env_vars }}"
   set-up:
     name: set-up
     runs-on: ubuntu-latest
@@ -130,7 +101,7 @@ jobs:
           echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
           echo DEPLOY_APPS=$DEPLOY_APPS >> $GITHUB_OUTPUT
   build:
-    name: deploy
+    name: build
     needs: [set-up]
     runs-on: ubuntu-latest
     if: |
@@ -164,6 +135,7 @@ jobs:
               echo "$line" >> $GITHUB_ENV
           done
       - name: Show Apps
+        id: show-apps
         run: |
           IFS=' ' read -ra DEPLOY_APPS_ARRAY <<< "$DEPLOY_APPS"
           echo "Deploy apps:"
@@ -173,3 +145,13 @@ jobs:
             echo "$REPO_NAME-$app"
             echo "flyctl deploy ./ --config apps/$app/fly.${NODE_ENV}.toml"
           done
+      - name: Export Outputs
+        id: export-outputs
+        run: |
+          echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
+          echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
+          echo DEPLOY_APPS=$DEPLOY_APPS >> $GITHUB_OUTPUT
+          echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
+          echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
+outputs:
+  output_json: ${{ toJSON(jobs.build.steps.export-outputs.outputs) }}
