@@ -164,7 +164,7 @@ jobs:
           echo "Build apps:"
           for app in "${DEPLOY_APPS_ARRAY[@]}"; do
             echo "Building $REPO_NAME-$app:$IMAGE_TAG image"
-            docker build --f ./apps/$app/Dockerfile -t $REPO_NAME-$app:$IMAGE_TAG .
+            docker build -f ./apps/$app/Dockerfile -t $REPO_NAME-$app:$IMAGE_TAG .
             docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           done
       - name: Export Outputs
