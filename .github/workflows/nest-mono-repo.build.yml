@@ -8,14 +8,6 @@ on:
         required: true
         default: '{}'
         type: string
-      AWS_ACCESS_KEY_ID: 
-        description: 'AWS Access key id'
-        required: true
-        type: string
-      AWS_SECRET_ACCESS_KEY: 
-        description: 'AWS Access key secret'
-        required: true
-        type: string
     outputs:
       env-json-output:
         description: "The first output string"
