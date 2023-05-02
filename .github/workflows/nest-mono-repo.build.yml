@@ -158,11 +158,11 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: void
-          IMAGE_TAG: 1.0.0
+          IMAGE_TAG: '1.0.0'
         run: |
           IFS=' ' read -ra DEPLOY_APPS_ARRAY <<< "$DEPLOY_APPS"
           echo "Build apps:"
-          for app in ${{fromJson(inputs.deploy-apps)}}; do
+          for app in "${DEPLOY_APPS_ARRAY[@]}"; do
             echo "Building $REPO_NAME-$app:$IMAGE_TAG image"
             docker build --f ./apps/$app/Dockerfile -t $REPO_NAME-$app:$IMAGE_TAG .
             docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
