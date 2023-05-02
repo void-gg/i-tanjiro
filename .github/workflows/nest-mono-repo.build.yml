@@ -140,6 +140,10 @@ jobs:
           echo '${{ needs.job1.outputs.envs }}' | jq -r '. | to_entries | .[] | .key + "=" + .value' | while read -r line; do
               echo "$line" >> $GITHUB_ENV
           done
+      - name: Check AWS_ACCESS_KEY_ID secret
+        run: |
+          echo ${{ secrets.AWS_ACCESS_KEY_ID }}
+          echo ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
