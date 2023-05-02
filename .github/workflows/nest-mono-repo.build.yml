@@ -169,9 +169,11 @@ jobs:
           echo "Build apps:"
           for app in "${DEPLOY_APPS_ARRAY[@]}"; do
             echo "Building $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG image"
+            docker build -f apps/$app/Dockerfile -t $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG .
             aws ecr describe-repositories --repository-names $REPO_NAME-$app || \
             aws ecr create-repository --repository-name $REPO_NAME-$app --image-scanning-configuration scanOnPush=true
             echo "Pushing $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG"
+            docker push $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
           done
       # - name: Export Outputs
       #   id: export-outputs
