@@ -160,7 +160,7 @@ jobs:
           ECR_REPOSITORY: void
           IMAGE_TAG: 'latest'
         run: |
-          echo 
+          echo "aca"
           IFS=' ' read -ra DEPLOY_APPS_ARRAY <<< "$DEPLOY_APPS"
           echo "$(pwd)"
           echo "$(ls)"
