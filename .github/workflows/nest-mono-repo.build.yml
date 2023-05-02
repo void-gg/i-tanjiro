@@ -27,17 +27,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 2
-      - name: Build, and Push the Image to Amazon ECR
-        id: build-image-temp
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: void
-          IMAGE_TAG: 'latest'
-        run: |
-          echo "aca"
-          echo "$(pwd)"
-          echo "$(ls)"
-          echo "Build apps:"
       - name: Get Changed Files
         run: |
           echo "github.event_name --> ${{ github.event_name }}"
@@ -141,6 +130,8 @@ jobs:
         github.event.pull_request.merged == true
       )
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
       - name: Build, and Push the Image to Amazon ECR
         id: build-image-temp
         env:
