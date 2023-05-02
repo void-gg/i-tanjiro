@@ -158,31 +158,24 @@ jobs:
         run: |
           set -e
           aws ecr describe-repositories
-      - name: Create ECR repository if it does not exist
+          
+      - name: Build and Push the Image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: void
+          IMAGE_TAG: 'latest'
         run: |
-          echo "aca"
-          echo $REPO_NAME
-          echo $app
-          echo $REPO_NAME-$app
-          echo "$REPO_NAME-$app"
-          aws ecr describe-repositories --repository-names ms-mono-repo-template || \
-          aws ecr create-repository --repository-name ms-mono-repo-template --image-scanning-configuration scanOnPush=true
-      # - name: Build and Push the Image to Amazon ECR
-      #   id: build-image
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     ECR_REPOSITORY: void
-      #     IMAGE_TAG: 'latest'
-      #   run: |
-      #     IFS=' ' read -ra DEPLOY_APPS_ARRAY <<< "$DEPLOY_APPS"
-      #     echo "Build apps:"
-      #     for app in "${DEPLOY_APPS_ARRAY[@]}"; do
-      #       echo "Building $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG image"
-      #       docker build -f apps/$app/Dockerfile -t $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG .
-
-      #       echo "Pushing $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG"
-      #       docker push $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
-      #     done
+          IFS=' ' read -ra DEPLOY_APPS_ARRAY <<< "$DEPLOY_APPS"
+          echo "Build apps:"
+          for app in "${DEPLOY_APPS_ARRAY[@]}"; do
+            echo "Building $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG image"
+      #      docker build -f apps/$app/Dockerfile -t $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG .
+            aws ecr describe-repositories --repository-names $REPO_NAME-$app || \
+            aws ecr create-repository --repository-name $REPO_NAME-$app --image-scanning-configuration scanOnPush=true
+            echo "Pushing $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG"
+      #      docker push $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
+          done
       # - name: Export Outputs
       #   id: export-outputs
       #   run: |
