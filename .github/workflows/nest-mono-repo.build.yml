@@ -28,7 +28,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: Build, and Push the Image to Amazon ECR
-        id: build-image
+        id: build-image-temp
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: void
@@ -104,7 +104,6 @@ jobs:
 
           echo "DEPLOY_APPS=${DEPLOY_APPS[*]}" >> $GITHUB_ENV
           echo "CHANGE_ALL=$CHANGE_ALL" >> $GITHUB_ENV
-          
       - name: Summary
         id: export-vars
         run: |
@@ -142,51 +141,62 @@ jobs:
         github.event.pull_request.merged == true
       )
     steps:
-      - name: Get environment variables
-        id: update-env-vars
-        run: |
-          echo '${{ needs.set-up.outputs.envs }}' | jq -r '. | to_entries | .[] | .key + "=" + .value' | while read -r line; do
-              echo "$line" >> $GITHUB_ENV
-          done
-          echo '${{ needs.job1.outputs.envs }}' | jq -r '. | to_entries | .[] | .key + "=" + .value' | while read -r line; do
-              echo "$line" >> $GITHUB_ENV
-          done
-      - name: Check AWS_ACCESS_KEY_ID secret
-        run: |
-          echo ${{ secrets.AWS_ACCESS_KEY_ID }}
-          echo ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{env.AWS_REGION}}
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
       - name: Build, and Push the Image to Amazon ECR
-        id: build-image
+        id: build-image-temp
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: void
           IMAGE_TAG: 'latest'
         run: |
           echo "aca"
-          IFS=' ' read -ra DEPLOY_APPS_ARRAY <<< "$DEPLOY_APPS"
           echo "$(pwd)"
           echo "$(ls)"
           echo "Build apps:"
-          for app in "${DEPLOY_APPS_ARRAY[@]}"; do
-            echo "Building $REPO_NAME-$app:$IMAGE_TAG image"
-            docker build -f apps/$app/Dockerfile -t $REPO_NAME-$app:$IMAGE_TAG .
-            docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          done
-      - name: Export Outputs
-        id: export-outputs
-        run: |
-          echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
-          echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
-          echo DEPLOY_APPS=$DEPLOY_APPS >> $GITHUB_OUTPUT
-          echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
-          echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
-          echo env
+      # - name: Get environment variables
+      #   id: update-env-vars
+      #   run: |
+      #     echo '${{ needs.set-up.outputs.envs }}' | jq -r '. | to_entries | .[] | .key + "=" + .value' | while read -r line; do
+      #         echo "$line" >> $GITHUB_ENV
+      #     done
+      #     echo '${{ needs.job1.outputs.envs }}' | jq -r '. | to_entries | .[] | .key + "=" + .value' | while read -r line; do
+      #         echo "$line" >> $GITHUB_ENV
+      #     done
+      # - name: Check AWS_ACCESS_KEY_ID secret
+      #   run: |
+      #     echo ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     echo ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: ${{env.AWS_REGION}}
+      # - name: Login to Amazon ECR
+      #   id: login-ecr
+      #   uses: aws-actions/amazon-ecr-login@v1
+      # - name: Build, and Push the Image to Amazon ECR
+      #   id: build-image
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     ECR_REPOSITORY: void
+      #     IMAGE_TAG: 'latest'
+      #   run: |
+      #     echo "aca"
+      #     IFS=' ' read -ra DEPLOY_APPS_ARRAY <<< "$DEPLOY_APPS"
+      #     echo "$(pwd)"
+      #     echo "$(ls)"
+      #     echo "Build apps:"
+      #     for app in "${DEPLOY_APPS_ARRAY[@]}"; do
+      #       echo "Building $REPO_NAME-$app:$IMAGE_TAG image"
+      #       docker build -f apps/$app/Dockerfile -t $REPO_NAME-$app:$IMAGE_TAG .
+      #       docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      #     done
+      # - name: Export Outputs
+      #   id: export-outputs
+      #   run: |
+      #     echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
+      #     echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
+      #     echo DEPLOY_APPS=$DEPLOY_APPS >> $GITHUB_OUTPUT
+      #     echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
+      #     echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
+      #     echo env
