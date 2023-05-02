@@ -156,8 +156,8 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
       - name: Check ECR Connection
         run: |
-        set -e
-        aws ecr describe-repositories --repository-names my-repo
+          set -e
+          aws ecr describe-repositories --repository-names my-repo
       # - name: Build, and Push the Image to Amazon ECR
       #   id: build-image
       #   env:
