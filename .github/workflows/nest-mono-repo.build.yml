@@ -158,6 +158,11 @@ jobs:
         run: |
           set -e
           aws ecr describe-repositories
+      - name: Create ECR repository if it does not exist
+        run: |
+          aws ecr describe-repositories --repository-names $REPO_NAME-$app || \
+          aws ecr create-repository --repository-name $$REPO_NAME-$app --image-scanning-configuration scanOnPush=true
+      
       # - name: Build, and Push the Image to Amazon ECR
       #   id: build-image
       #   env:
