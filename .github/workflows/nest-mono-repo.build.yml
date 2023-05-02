@@ -160,10 +160,14 @@ jobs:
           aws ecr describe-repositories
       - name: Create ECR repository if it does not exist
         run: |
+          echo "aca"
+          echo $REPO_NAME
+          echo $app
+          echo $REPO_NAME-$app
+          echo "$REPO_NAME-$app"
           aws ecr describe-repositories --repository-names $REPO_NAME-$app || \
           aws ecr create-repository --repository-name $$REPO_NAME-$app --image-scanning-configuration scanOnPush=true
-      
-      # - name: Build, and Push the Image to Amazon ECR
+      # - name: Build and Push the Image to Amazon ECR
       #   id: build-image
       #   env:
       #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
