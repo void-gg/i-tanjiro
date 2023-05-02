@@ -158,9 +158,11 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: void
-          IMAGE_TAG: '1.0.0'
+          IMAGE_TAG: 'latest'
         run: |
           IFS=' ' read -ra DEPLOY_APPS_ARRAY <<< "$DEPLOY_APPS"
+          pwd
+          ls
           echo "Build apps:"
           for app in "${DEPLOY_APPS_ARRAY[@]}"; do
             echo "Building $REPO_NAME-$app:$IMAGE_TAG image"
