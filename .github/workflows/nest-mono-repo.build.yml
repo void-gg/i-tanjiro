@@ -157,7 +157,7 @@ jobs:
       - name: Check ECR Connection
         run: |
           set -e
-          aws ecr describe-repositories --repository-names my-repo
+          aws ecr describe-repositories
       # - name: Build, and Push the Image to Amazon ECR
       #   id: build-image
       #   env:
