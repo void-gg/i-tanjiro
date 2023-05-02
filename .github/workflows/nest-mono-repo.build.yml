@@ -158,7 +158,6 @@ jobs:
         run: |
           set -e
           aws ecr describe-repositories
-          
       - name: Build and Push the Image to Amazon ECR
         id: build-image
         env:
