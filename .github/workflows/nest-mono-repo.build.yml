@@ -175,8 +175,9 @@ jobs:
       - name: Export Outputs
         id: export-outputs
         run: |
+          echo REPO_NAME=$REPO_NAME >> $GITHUB_OUTPUT
+          echo NODE_ENV=$NODE_ENV >> $GITHUB_OUTPUT
+          echo AWS_REGION=$AWS_REGION >> $GITHUB_OUTPUT
           echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
           echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
           echo DEPLOY_APPS=$DEPLOY_APPS >> $GITHUB_OUTPUT
-          echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
-          echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
