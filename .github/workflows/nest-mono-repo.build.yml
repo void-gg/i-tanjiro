@@ -108,7 +108,7 @@ jobs:
     needs: [set-up]
     runs-on: ubuntu-latest
     outputs:
-      all-outputs: ${{ steps.export-outputs.outputs }}
+      all-outputs: ${{ toJSON(steps.export-outputs.outputs) }}
     if: |
       (
         github.event_name == 'push' &&
@@ -171,6 +171,7 @@ jobs:
             docker build -f apps/$app/Dockerfile -t $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG .
             aws ecr describe-repositories --repository-names $REPO_NAME-$app || \
             aws ecr create-repository --repository-name $REPO_NAME-$app --image-scanning-configuration scanOnPush=true
+            aws ecr batch-delete-image --repository-name $REPO_NAME-$app --image-ids imageTag=latest
             echo "Pushing $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG"
             docker push $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
           done
