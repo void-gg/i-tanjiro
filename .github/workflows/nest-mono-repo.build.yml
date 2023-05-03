@@ -103,6 +103,7 @@ jobs:
           echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
           echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
           echo DEPLOY_APPS=$DEPLOY_APPS >> $GITHUB_OUTPUT
+          echo IMAGE_TAG=latest >> $GITHUB_OUTPUT
   build:
     name: build
     needs: [set-up]
@@ -159,7 +160,6 @@ jobs:
       #   id: build-image
       #   env:
       #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     IMAGE_TAG: 'latest'
       #   run: |
       #     IFS=' ' read -ra DEPLOY_APPS_ARRAY <<< "$DEPLOY_APPS"
       #     echo "Build apps:"
@@ -181,3 +181,4 @@ jobs:
           echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
           echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
           echo DEPLOY_APPS=$DEPLOY_APPS >> $GITHUB_OUTPUT
+          echo IMAGE_TAG=$IMAGE_TAG >> $GITHUB_OUTPUT
