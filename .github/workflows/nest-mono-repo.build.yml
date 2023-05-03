@@ -108,7 +108,7 @@ jobs:
     needs: [set-up]
     runs-on: ubuntu-latest
     outputs:
-      all-outputs: ${{ steps.export-outputs.outputs.CHANGE_ALL }}
+      all-outputs: ${{ steps.export-outputs.outputs }}
     if: |
       (
         github.event_name == 'push' &&
@@ -174,12 +174,11 @@ jobs:
             echo "Pushing $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG"
             docker push $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
           done
-      # - name: Export Outputs
-      #   id: export-outputs
-      #   run: |
-      #     echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
-      #     echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
-      #     echo DEPLOY_APPS=$DEPLOY_APPS >> $GITHUB_OUTPUT
-      #     echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
-      #     echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
-      #     echo env
+      - name: Export Outputs
+        id: export-outputs
+        run: |
+          echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
+          echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
+          echo DEPLOY_APPS=$DEPLOY_APPS >> $GITHUB_OUTPUT
+          echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
+          echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
